@@ -1,0 +1,245 @@
+#include <iostream>
+#include <string>
+using namespace std;
+class PhoneBook
+{
+public:
+	PhoneBook();
+	int phoneBook(string key);
+	void addItam(string fullName, int number);
+	int numberOfItamsInIndex(int index);
+	void printBook();
+	void printItamsInIndex(int);
+	void findNumber(string fullName);
+	void removeNumber(string);
+private:
+	static const int bookSize = 10;
+	struct Cell
+	{
+		string name;
+		int Phone;
+		Cell* next;
+	};
+	Cell* phonebook[bookSize];
+};
+
+PhoneBook::PhoneBook()
+{
+	for (int i = 0; i < bookSize; i++)
+	{
+		phonebook[i] = new Cell;
+		phonebook[i]->name = "empty";
+		phonebook[i]->Phone = NULL;
+		phonebook[i]->next = NULL;
+	}
+}
+
+int PhoneBook:: phoneBook(string key)
+{
+	int hash = 0;
+	int index;
+	for (int i = 0; i < key.length(); i++)
+	{
+		hash = hash + (int)key[i];
+	}
+	index = hash % bookSize;
+	return index;
+}
+
+void PhoneBook::addItam(string fullName, int number)
+{
+	int index = phoneBook(fullName);
+	if (phonebook[index]->name == "empty")
+	{
+		phonebook[index]->name = fullName;
+		phonebook[index]->Phone = number;
+	}
+	else
+	{
+		Cell* ptr = phonebook[index];
+		Cell* n = new Cell;
+		n->name = fullName;
+		n->Phone = number;
+		n->next = NULL;
+		while (ptr->next != NULL)
+		{
+			ptr = ptr->next;
+		}
+		ptr->next = n;
+	}
+}
+
+int PhoneBook::numberOfItamsInIndex(int index)
+{
+	int count = 0;
+	if (phonebook[index]->name == "empty")
+		return count;
+	else
+	{
+		count++;
+		Cell* ptr = phonebook[index];
+		while (ptr->next != NULL)
+		{
+			count++;
+			ptr = ptr->next;
+		}
+	}
+	return count;
+}
+
+void PhoneBook::printItamsInIndex(int index)
+{
+	Cell* ptr = phonebook[index];
+	if (phonebook[index]->name == "empty")
+		cout << " index = " << index << " is empty" << endl;
+	else
+	{
+		cout << " index " << index << " contains the following itams" << endl;
+		while (ptr != NULL)
+		{
+			cout << "----------------" << endl;
+			cout << ptr->name;
+			cout << ptr->Phone;
+			cout << "----------------" << endl;
+			ptr = ptr->next;
+		}
+	}
+}
+
+void PhoneBook::printBook()
+{
+	for (int i = 0; i < bookSize; i++)
+	{
+		cout << "-------------------" << endl;
+		cout << "index = " << i << endl;
+		cout << "Full Name: " << phonebook[i]->name << endl;
+		cout << "Phone Number: " << phonebook[i]->Phone << endl;
+		cout << "# of contacts in index " << numberOfItamsInIndex(i) << endl;
+		cout << "-------------------" << endl;
+	}
+}
+
+void PhoneBook::findNumber(string fullName)
+{
+	int index = phoneBook(fullName);
+	bool foundNumber = false;
+	int Number;
+	Cell* ptr = phonebook[index];
+	while (ptr != NULL)
+	{
+		if (ptr->name == fullName)
+		{
+			foundNumber = true;
+			Number = ptr->Phone;
+		}
+		ptr = ptr->next;
+	}
+	if (foundNumber == true)
+		cout << "The contacts number is: " << Number << endl;
+	else
+		cout << fullName << "'s contact was not found" << endl;
+}
+
+void PhoneBook::removeNumber(string fullName)
+{
+	int index = phoneBook(fullName);
+	Cell* delptr;
+	Cell* P1;
+	Cell* P2;
+	if (phonebook[index]->name == "empty" && phonebook[index]->Phone == NULL)
+		cout << "Th ename was not found in the list" << endl;
+	else if (phonebook[index]->name == fullName && phonebook[index]->next == NULL)
+	{
+		phonebook[index]->name = "empty";
+		phonebook[index]->Phone = NULL;
+		cout << fullName << " was removed from the Phone book" << endl;
+	}
+	else if (phonebook[index]->name == fullName)
+	{
+		delptr = phonebook[index];
+		phonebook[index] = phonebook[index]->next;
+		delete delptr;
+		cout << fullName << " was removed from the list" << endl;
+	}
+	else
+	{
+		P1 = phonebook[index]->next;
+		P2 = phonebook[index];
+		while (P1 != NULL && P1->name != fullName)
+		{
+			P2 = P1;
+			P1 = P1->next;
+		}
+		if (P1 == NULL)
+			cout << "The name was removed from the list" << endl;
+		else
+		{
+			delptr = P1;
+			P1 = P1->next;
+			P2->next = P1;
+			delete delptr;
+			cout << fullName << " was deleted from the list" << endl;
+ 		}
+	}
+}
+
+int main()
+{
+	PhoneBook Viva;
+	int choice;
+	string fullName;
+	int number;
+	cout << "Welcome to the \'***Phone Book***\'" << endl;
+	cout << "Please enter one of the following" << endl;
+	cout << "1. to add a new contact" << endl;
+	cout << "2. to remove a contact" << endl;
+	cout << "3. to search a contact" << endl;
+	cout << "4. to view all contacts" << endl;
+	cout << "5. Quit" << endl;
+	cin >> choice;
+	while (choice != 5)
+	{
+		switch (choice)
+		{
+		case 1:
+			cout << "Please enter the full name of the entree" << endl;
+			getline(cin, fullName);
+			getline(cin, fullName);
+			cout << "Enter the phone number of the entree" << endl;
+			cin >> number;
+			Viva.addItam(fullName, number);
+			cout << "The name was added to the contact list" << endl;
+			cout << "Please enter your choice" << endl;
+			cin >> choice;
+			break;
+		case 2:
+			cout << "To remove a contact please enter the full name" << endl;
+			getline(cin, fullName);
+			getline(cin, fullName);
+			Viva.removeNumber(fullName);
+			cout << " The number was removed" << endl;
+			cout << "Please enter your choice" << endl;
+			cin >> choice;
+			break;
+		case 3:
+			cout << "please enter the full name to search a contact" << endl;
+			getline(cin, fullName);
+			getline(cin, fullName);
+			Viva.findNumber(fullName);
+			cout << "Please enter your choice" << endl;
+			cin >> choice;
+			break;
+		case 4:
+			int indexNumber;
+			cout << "All contacts in Phone Book: " << endl;
+			Viva.printBook();
+			cout << "To view a contact in a index please press the index number:" << endl;
+			cin >> indexNumber;
+			Viva.printItamsInIndex(indexNumber);
+			cout << "Please enter your choice" << endl;
+			cin >> choice;
+			break;
+		}
+	}
+
+}
